@@ -1327,33 +1327,7 @@ func (h *Handler) CreateProduct(c *gin.Context) {
 
 ---
 
-# 43. Gin
-
-When using Gin, follow the existing project's conventions.
-
-Keep handlers focused on HTTP concerns.
-
-Example:
-
-```go
-func (h *Handler) GetProduct(c *gin.Context) {
-    id := c.Param("id")
-
-    product, err := h.service.Get(c.Request.Context(), id)
-    if err != nil {
-        h.writeError(c, err)
-        return
-    }
-
-    c.JSON(http.StatusOK, product)
-}
-```
-
-Do not access PostgreSQL directly from Gin handlers.
-
----
-
-# 44. Request Validation
+# 43. Request Validation
 
 Validate external input at the boundary.
 
@@ -1371,163 +1345,7 @@ Do not allow invalid input to travel deep into the system before discovering the
 
 ---
 
-# 45. Pagination API
-
-For page-based APIs, establish explicit limits.
-
-Example:
-
-```text
-page >= 1
-per_page >= 1
-per_page <= configured maximum
-```
-
-Do not allow unlimited client-controlled page sizes.
-
----
-
-# 46. Sorting API
-
-Never accept arbitrary SQL through:
-
-```text
-?sort=<value>
-```
-
-Map API values to trusted SQL columns.
-
-Example:
-
-```text
-name
-price
-created_at
-updated_at
-```
-
-Only supported values should be accepted.
-
----
-
-# 47. Filtering
-
-Keep filter parsing separate from SQL construction.
-
-Example:
-
-```go
-type ProductFilter struct {
-    Search    string
-    Category  string
-    Brand     string
-    MinPrice  *int64
-    MaxPrice  *int64
-}
-```
-
-Then the repository converts this structured filter into SQL.
-
-Do not pass raw query strings from HTTP directly into the repository.
-
----
-
-# 48. Naming
-
-Follow standard Go naming.
-
-Use:
-
-```go
-Product
-ProductRepository
-NewProductRepository
-GetProduct
-CreateProduct
-```
-
-Avoid:
-
-```go
-ProductManager
-ProductHandlerServiceManager
-ProductRepositoryInterface
-```
-
-Do not suffix every interface with:
-
-```text
-Interface
-```
-
-Go interfaces should normally be named by behavior:
-
-```go
-Reader
-Repository
-Client
-Store
-```
-
-when appropriate.
-
----
-
-# 49. Acronyms
-
-Use Go conventions:
-
-```go
-HTTPClient
-APIClient
-URL
-ID
-UUID
-JSON
-HTTP
-```
-
-Not:
-
-```go
-HttpClient
-ApiClient
-Url
-Id
-Uuid
-Json
-```
-
----
-
-# 50. Variable Naming
-
-Prefer descriptive names.
-
-Good:
-
-```go
-productID
-sourceProductID
-categoryID
-sourceCategoryID
-```
-
-Avoid:
-
-```go
-pid
-sid
-x
-data
-obj
-```
-
-unless the scope is extremely small.
-
----
-
-# 51. Comments
+# 44. Comments
 
 Comments should explain:
 
@@ -1560,7 +1378,7 @@ Do not generate extensive documentation comments unless required by the public A
 
 ---
 
-# 52. Utility Packages
+# 45. Utility Packages
 
 Do not create a generic:
 
@@ -1592,7 +1410,7 @@ utils.ParsePrice()
 
 ---
 
-# 53. Generics
+# 46. Generics
 
 Use generics only when they genuinely reduce duplication while preserving readability.
 
@@ -1602,7 +1420,7 @@ Prefer straightforward code when the generic abstraction is harder to understand
 
 ---
 
-# 54. Reflection
+# 47. Reflection
 
 Avoid reflection unless it is genuinely necessary.
 
@@ -1612,7 +1430,7 @@ Reflection-heavy designs usually make business logic harder to understand and de
 
 ---
 
-# 55. Global State
+# 48. Global State
 
 Avoid mutable global state.
 
@@ -1633,7 +1451,7 @@ const DefaultPageSize = 24
 
 ---
 
-# 56. Configuration
+# 49. Configuration
 
 Configuration should be explicit.
 
@@ -1653,7 +1471,7 @@ Load configuration at the application boundary and inject it.
 
 ---
 
-# 57. Application Wiring
+# 50. Application Wiring
 
 Dependency creation should happen near application startup.
 
@@ -1679,7 +1497,7 @@ This makes dependency relationships visible.
 
 ---
 
-# 58. Do Not Over-Engineer
+# 51. Do Not Over-Engineer
 
 Before introducing:
 
@@ -1705,7 +1523,7 @@ Do not use patterns to demonstrate knowledge of patterns.
 
 ---
 
-# 59. Refactoring Existing Code
+# 52. Refactoring Existing Code
 
 When modifying existing code:
 
@@ -1728,293 +1546,7 @@ over:
 rewrite the module
 ```
 
----
-
-# 60. New Feature Workflow
-
-For a new feature:
-
-## Step 1
-
-Understand the requirement.
-
-## Step 2
-
-Identify the owning domain.
-
-## Step 3
-
-Inspect existing similar implementations.
-
-## Step 4
-
-Define domain structures.
-
-## Step 5
-
-Define interfaces only where useful.
-
-## Step 6
-
-Define persistence requirements.
-
-## Step 7
-
-Define external integration boundaries if required.
-
-## Step 8
-
-Implement repository.
-
-## Step 9
-
-Implement service/application logic.
-
-## Step 10
-
-Implement HTTP/API boundary.
-
-## Step 11
-
-Wire dependencies.
-
-## Step 12
-
-Review the complete flow.
-
-Do not start by immediately writing the handler.
-
----
-
-# 61. Implementation Order
-
-For a typical database-backed feature:
-
-```text
-Requirement
-    ↓
-Domain Model
-    ↓
-Database Schema
-    ↓
-Repository Interface
-    ↓
-Repository Implementation
-    ↓
-Service
-    ↓
-HTTP DTO
-    ↓
-Handler
-    ↓
-Routes
-    ↓
-Dependency Wiring
-```
-
-For external integrations:
-
-```text
-External API Model
-    ↓
-External Client
-    ↓
-Mapper
-    ↓
-Domain
-    ↓
-Repository
-    ↓
-Service
-```
-
----
-
-# 62. Feature Verification
-
-After implementation, verify the complete path.
-
-Do not stop after checking that individual files compile.
-
-Trace:
-
-```text
-Request
- ↓
-Handler
- ↓
-Service
- ↓
-Repository
- ↓
-Database
-```
-
-or:
-
-```text
-External API
- ↓
-Client
- ↓
-Mapper
- ↓
-Service
- ↓
-Repository
- ↓
-Database
-```
-
-Check:
-
-* error propagation
-* transaction boundaries
-* data ownership
-* duplicate handling
-* idempotency where relevant
-* null handling
-* external identifiers
-* database constraints
-
----
-
-# 63. Git Workflow
-
-When working in an existing repository, make changes in coherent checkpoints.
-
-A commit should represent one logical change.
-
-Good:
-
-```text
-feat(catalog): add product repository
-feat(catalog): add category synchronization
-feat(catalog): add variant mapping
-fix(catalog): preserve product slug during sync
-```
-
-Avoid commits such as:
-
-```text
-changes
-update
-fix stuff
-work
-final
-```
-
-Do not create commits automatically unless explicitly requested or the surrounding workflow requires it.
-
----
-
-# 64. Chat / Agent Checkpoints
-
-When working interactively with an AI coding agent, distinguish:
-
-```text
-Git checkpoint
-```
-
-from:
-
-```text
-Conversation / branch checkpoint
-```
-
-A Git checkpoint means:
-
-```text
-code has reached a coherent commit state
-```
-
-A conversation checkpoint means:
-
-```text
-a logical implementation phase is complete
-and the next phase can begin independently
-```
-
-Example:
-
-```text
-Auth Module
-     ↓
-Chat Branch Checkpoint
-     ↓
-Catalog Domain
-     ↓
-Chat Branch Checkpoint
-     ↓
-WooCommerce Sync
-     ↓
-Chat Branch Checkpoint
-     ↓
-Catalog Read APIs
-```
-
-The AI should explicitly identify major logical milestones when the user works this way.
-
----
-
-# 65. AI Coding Behavior
-
-When acting as a coding agent:
-
-## Before coding
-
-Explain briefly:
-
-```text
-what will change
-where it will change
-why the design fits the repository
-```
-
-Then implement.
-
-Do not spend excessive time explaining obvious code.
-
----
-
-# 66. When the User Says "Proceed"
-
-Interpret:
-
-```text
-proceed
-```
-
-as:
-
-> Continue from the current implementation checkpoint using the established architecture and style.
-
-Do not restart the design unless new information requires it.
-
-Do not repeat previously completed work.
-
----
-
-# 67. When Requirements Are Ambiguous
-
-Do not invent business rules.
-
-If the ambiguity affects architecture or data correctness, ask.
-
-Examples:
-
-```text
-Should this field be Gluzo-owned or source-owned?
-Should deletion be hard delete or soft delete?
-Should a missing external mapping create a record?
-Should this relationship be replaced or appended?
-```
-
-If ambiguity does not materially affect correctness, choose the simplest reasonable option and state the assumption.
-
----
-
-# 68. Production-Grade Does Not Mean Maximum Complexity
+# 53. Production-Grade Does Not Mean Maximum Complexity
 
 Production-grade code means:
 
@@ -2045,7 +1577,7 @@ Use complexity only when justified by a real requirement.
 
 ---
 
-# 69. Testing Constraint
+# 54. Testing Constraint
 
 For this coding style, do not introduce:
 
@@ -2071,67 +1603,7 @@ Do not add test infrastructure merely because a generic Go development guide rec
 
 ---
 
-# 70. Infrastructure Scope
-
-Do not introduce infrastructure concerns unless explicitly required.
-
-Avoid automatically adding:
-
-```text
-Docker
-Kubernetes
-CI/CD
-monitoring
-tracing
-logging platforms
-benchmarking
-```
-
-The application code should remain focused on its actual business responsibility.
-
-Existing infrastructure must be respected, but unrelated infrastructure should not be introduced during feature implementation.
-
----
-
-# 71. Logging
-
-Do not create a logging abstraction merely because every application supposedly needs one.
-
-If the repository already has logging infrastructure, use it.
-
-If logging is not required for the feature, do not add an elaborate logging system.
-
-Never use logging as a substitute for returning an error.
-
----
-
-# 72. Security
-
-Security-sensitive boundaries require explicit handling.
-
-Pay attention to:
-
-```text
-credentials
-API keys
-JWT secrets
-database credentials
-user input
-SQL injection
-authorization
-authentication
-sensitive response fields
-```
-
-Never hardcode secrets.
-
-Never expose credentials in API responses.
-
-Never construct SQL from untrusted input.
-
----
-
-# 73. Performance
+# 55. Performance
 
 Do not prematurely optimize.
 
@@ -2155,31 +1627,7 @@ creating a new HTTP client per request
 missing database indexes for obvious lookup keys
 ```
 
----
-
-# 74. N+1 Queries
-
-Be especially careful in read APIs.
-
-Bad:
-
-```text
-Get products
-  ↓
-query categories for each product
-  ↓
-query images for each product
-  ↓
-query brand for each product
-```
-
-Prefer appropriate joins, aggregation, or purpose-built queries.
-
-Do not solve every N+1 problem by creating an abstraction layer.
-
----
-
-# 75. API Response Design
+# 56. API Response Design
 
 API responses should represent the API contract, not database tables.
 
@@ -2207,7 +1655,7 @@ unless they are intentionally part of the public API.
 
 ---
 
-# 76. Read vs Write Models
+# 57. Read vs Write Models
 
 It is acceptable for write-side domain structures and read-side DTOs to differ.
 
@@ -2226,39 +1674,7 @@ Do not force a single model to serve every purpose.
 
 ---
 
-# 77. Domain Ownership
-
-Every important field should have an owner.
-
-For synchronized systems, distinguish:
-
-```text
-Source-owned
-Gluzo-owned
-Derived
-```
-
-Example:
-
-```text
-WooCommerce:
-external product ID
-
-Gluzo:
-internal UUID
-
-Gluzo-owned:
-slug
-
-WooCommerce-sourced:
-source price
-```
-
-The sync implementation must not overwrite fields owned by another system without an explicit rule.
-
----
-
-# 78. Idempotency
+# 58. Idempotency
 
 For synchronization and retryable operations, ask:
 
@@ -2285,73 +1701,7 @@ Use database uniqueness constraints as a final protection.
 
 ---
 
-# 79. Database Constraints Are Part of Correctness
-
-Do not rely only on application code for uniqueness.
-
-If the domain requires:
-
-```text
-one mapping per source/external ID
-```
-
-enforce it in PostgreSQL.
-
-Application validation and database constraints should complement each other.
-
----
-
-# 80. Deletion Semantics
-
-Before implementing deletion, explicitly determine:
-
-```text
-hard delete
-soft delete
-source reconciliation
-relationship removal
-```
-
-Do not automatically add:
-
-```text
-deleted_at
-```
-
-to every table.
-
-Use soft deletion only when there is a business requirement.
-
----
-
-# 81. Reconciliation Semantics
-
-For source synchronization, distinguish:
-
-```text
-create
-update
-delete
-replace
-```
-
-For relationships, replacement may be correct:
-
-```text
-old categories
-      ↓
-delete existing
-      ↓
-insert current categories
-```
-
-For entities, update existing mapped records.
-
-Do not blindly delete and recreate entities when identity must remain stable.
-
----
-
-# 82. External Synchronization Pattern
+# 59. External Synchronization Pattern
 
 For a source integration:
 
@@ -2387,7 +1737,7 @@ internal identity
 
 ---
 
-# 83. Source Mapping Rule
+# 60. Source Mapping Rule
 
 If the same external entity is encountered again:
 
@@ -2410,7 +1760,7 @@ when the source provides a stable ID.
 
 ---
 
-# 84. Code Style
+# 61. Code Style
 
 Prefer standard `gofmt` formatting.
 
@@ -2438,7 +1788,7 @@ Keep control flow easy to follow.
 
 ---
 
-# 85. Avoid Clever Go
+# 62. Avoid Clever Go
 
 Do not optimize for cleverness.
 
@@ -2458,46 +1808,7 @@ Go code should be boring in a good way.
 
 ---
 
-# 86. File Size
-
-Do not impose arbitrary file-size limits.
-
-Split files when responsibilities become difficult to understand.
-
-Good split:
-
-```text
-woocommerce_models.go
-woocommerce_client.go
-mapper.go
-service.go
-```
-
-because each file owns a clear responsibility.
-
-Do not split every struct into its own file.
-
----
-
-# 87. Imports
-
-Keep imports clean and grouped according to standard Go conventions.
-
-Do not create unnecessary aliases.
-
-Use package names that make call sites readable.
-
----
-
-# 88. Generated Code
-
-Do not manually modify generated code unless explicitly required.
-
-When generated code exists, understand its source before changing it.
-
----
-
-# 89. Documentation
+# 63. Documentation
 
 Documentation should explain meaningful architecture and behavior.
 
@@ -2514,7 +1825,7 @@ important architectural decisions
 
 ---
 
-# 90. AI Self-Review Before Finishing
+# 64. AI Self-Review Before Finishing
 
 Before declaring a feature complete, inspect:
 
@@ -2574,7 +1885,7 @@ Did I accidentally redesign unrelated code?
 
 ---
 
-# 91. Final AI Response Format
+# 65. Final AI Response Format
 
 When completing a coding task, provide a concise summary:
 
@@ -2605,7 +1916,7 @@ Do not provide a huge explanation unless requested.
 
 ---
 
-# 92. Golden Rules
+# 66. Golden Rules
 
 The AI must remember these rules above all others:
 
@@ -2639,7 +1950,7 @@ The AI must remember these rules above all others:
 
 ---
 
-# 93. Adaptation Rule
+# 67. Adaptation Rule
 
 This skill is a **default engineering style**, not a rigid framework.
 
