@@ -1,0 +1,69 @@
+Create QUERY_CONVENTIONS.md for this repository so future database query implementations follow one consistent style.
+
+The priority is boring, readable code that I can follow step by step and debug manually. Prefer explicit logic over clever abstractions or compact code.
+
+First inspect existing query implementations, database access libraries, and repository documentation. Base the conventions on this repository’s actual stack. Identify inconsistent patterns and recommend one clear approach without copying existing mistakes.
+
+Include these guidelines:
+
+1. Query structure
+   - Keep queries close to the code that executes them.
+   - Use readable multiline SQL with consistent indentation.
+   - Prefer explicit column names over SELECT *.
+   - Use meaningful table aliases, variable names, and function names.
+   - Keep execution order easy to follow: validate input, build SQL and arguments, execute, scan, return.
+
+2. Dynamic queries
+   - Start with a simple base query and append conditions explicitly.
+   - Keep each condition beside its corresponding argument.
+   - Explain placeholder numbering with a small example showing how SQL and arguments change after each filter.
+   - Avoid hidden state, nested closures, reflection, and generic query builders unless their benefit is clearly justified.
+   - State when helpers improve readability and when straightforward repetition is acceptable.
+
+3. Input handling and safety
+   - Separate input normalization, validation, and query construction.
+   - Define how omitted values, zero values, empty strings, empty lists, and NULL differ.
+   - Parameterize values.
+   - Allowlist dynamic identifiers and sort directions.
+   - Make unfiltered UPDATE or DELETE operations explicit and intentional.
+   - Do not invent business defaults, limits, or filtering rules.
+
+4. Predictable results
+   - Document filtering, joins, sorting, and pagination behavior.
+   - Use deterministic ordering, including a tie-breaker where needed.
+   - Explain how joins can duplicate rows or affect counts.
+   - Keep list queries and count queries consistent.
+   - Define handling for no rows, empty results, and nullable columns.
+
+5. Execution and errors
+   - Follow the repository’s context and cancellation conventions.
+   - Close result sets and check iteration errors.
+   - Keep selected columns and scan destinations in matching order.
+   - Add useful error context while preserving the underlying error.
+   - Explain transaction boundaries and use transactions when operations must succeed or fail together.
+
+6. Manual debugging
+   - Make the final SQL template and ordered arguments easy to inspect separately.
+   - Document useful debugger checkpoints and expected intermediate values.
+   - Explain how to reproduce a query locally with safe sample values.
+   - Avoid logging credentials, tokens, personal data, or sensitive query arguments.
+   - Distinguish development diagnostics from production logging.
+
+7. Performance and verification
+   - Avoid unnecessary queries, repeated lookups, and accidental N+1 patterns.
+   - Explain when to inspect a query plan.
+   - Recommend indexes based on actual query patterns and evidence.
+   - Include a short checklist covering important edge cases and result correctness.
+
+Provide small, repository-relevant examples of:
+- A simple lookup.
+- A filtered list with sorting and pagination.
+- An insert or update.
+- A multi-step operation requiring a transaction, if applicable.
+- An overly clever implementation rewritten into a clearer version.
+
+Clearly distinguish required conventions from optional recommendations. Explain the reason behind each major rule in plain language.
+
+Keep the document practical and easy to scan. Avoid unnecessary frameworks, speculative architecture, or rigid rules that make simple queries harder to understand.
+
+Only create the convention document. Do not modify application code, database schema, or existing queries.
